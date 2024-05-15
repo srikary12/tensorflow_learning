@@ -5,19 +5,20 @@ import tensorflow_datasets as tfds
 print(tf.__version__)
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+(training_images, training_labels), (test_images, test_labels) = tfds.as_numpy(tfds.load('fashion_mnist', split = ['train', 'test'], batch_size=-1, as_supervised=True))
 
-mnist_data = tfds.load("fashion_mnist")
-for item in mnist_data:
-    print(item)
+training_images = training_images / 255.0
+test_images = test_images / 255.0
 
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Flatten(input_shape=(28,28,1)),
+    tf.keras.layers.Dense(128, activation=tf.nn.relu),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(10, activation=tf.nn.softmax)
+])
 
-mnist_train = tfds.load(name="fashion_mnist", split="train")
-assert isinstance(mnist_train, tf.data.Dataset)
-print(type(mnist_data))
-print(type(mnist_train))
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
 
-for item in mnist_train.take(1):
-    print(item.keys())
-    print(type(item))
-    print(item['image'])
-    print(item['label'])
+model.fit(training_images, training_labels, epochs=5)
