@@ -14,7 +14,7 @@ import tensorflow_datasets as tfds
     with_info=True,
 )
 
-
+print(type(ds_train))
 def normalize_img(image, label):
   return tf.cast(image, tf.float32) / 255., label
 ds_train = ds_train.map(
